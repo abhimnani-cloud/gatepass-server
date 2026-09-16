@@ -1,0 +1,15 @@
+{
+  "name": "gatepass-server",
+  "version": "1.0.0",
+  "description": "Digital entry-pass backend: time-locked QR gate entry, WhatsApp-verified transfers, sponsor tiers, lucky-coupon reveal. Zero npm dependencies -- Node core modules only.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --experimental-sqlite server.js",
+    "reset-data": "rm -rf data && echo 'Deleted local data/ -- next start reseeds demo data.'"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

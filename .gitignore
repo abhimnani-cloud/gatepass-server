@@ -1,0 +1,18 @@
+# The local SQLite database (real member names/WhatsApp numbers once you
+# start using this for a real event) -- never commit this. On Render, the
+# live database lives on the attached persistent disk (see render.yaml),
+# completely separate from what's in git.
+data/
+
+# Only relevant if you ever add npm packages later -- this project ships
+# with zero dependencies, so this normally stays empty, but it's here so a
+# future `npm install` doesn't get committed by accident.
+node_modules/
+
+# Local secrets, if you ever create one instead of using Render's
+# Environment tab (e.g. to set ADMIN_PASSWORD for local testing).
+.env
+
+# OS/editor noise.
+.DS_Store
+*.log

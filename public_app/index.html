@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GatePass Member App</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23B8892B'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23FBF7EE' font-family='Georgia,serif'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Sora:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF7EE;
+    --surface:#FFFFFF;
+    --surface-2:#F3EEE1;
+    --surface-3:#EAE2CE;
+    --ink:#1B2023;
+    --ink-soft:#6B665C;
+    --ink-faint:#95907F;
+    --accent:#B8892B;
+    --accent-2:#8F6A1F;
+    --accent-ink:#1B2023;
+    --line:rgba(27,32,35,0.12);
+    --line-strong:rgba(27,32,35,0.22);
+    --day1:#2F8F82;
+    --day1-soft:#E4F1EE;
+    --day2:#C0562E;
+    --day2-soft:#F7E9E1;
+    --day3:#6B5FA8;
+    --day3-soft:#EBE8F5;
+    --vip-1:#8A6A21;
+    --vip-2:#E7C873;
+    --vip-ink:#3A2E0C;
+    --success:#3F7D4C;
+    --success-soft:#E3EFE3;
+    --danger:#B24A3E;
+    --shadow:0 12px 32px -12px rgba(27,32,35,0.28);
+    --shadow-sm:0 4px 14px -6px rgba(27,32,35,0.22);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#11171A;
+      --surface:#1A2226;
+      --surface-2:#212B2F;
+      --surface-3:#293539;
+      --ink:#F3EEE1;
+      --ink-soft:#ABA79A;
+      --ink-faint:#78766C;
+      --accent:#DDB35C;
+      --accent-2:#F0C978;
+      --accent-ink:#20180A;
+      --line:rgba(243,238,225,0.12);
+      --line-strong:rgba(243,238,225,0.24);
+      --day1:#4FBFAE;
+      --day1-soft:#1B3733;
+      --day2:#E58A5C;
+      --day2-soft:#3A281F;
+      --day3:#9D8FD9;
+      --day3-soft:#2A2540;
+      --vip-1:#D9AF52;
+      --vip-2:#8A6A21;
+      --vip-ink:#241C08;
+      --success:#79C687;
+      --success-soft:#1E3324;
+      --danger:#E08277;
+      --shadow:0 16px 40px -14px rgba(0,0,0,0.55);
+      --shadow-sm:0 6px 18px -8px rgba(0,0,0,0.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#11171A;
+    --surface:#1A2226;
+    --surface-2:#212B2F;
+    --surface-3:#293539;
+    --ink:#F3EEE1;
+    --ink-soft:#ABA79A;
+    --ink-faint:#78766C;
+    --accent:#DDB35C;
+    --accent-2:#F0C978;
+    --accent-ink:#20180A;
+    --line:rgba(243,238,225,0.12);
+    --line-strong:rgba(243,238,225,0.24);
+    --day1:#4FBFAE;
+    --day1-soft:#1B3733;
+    --day2:#E58A5C;
+    --day2-soft:#3A281F;
+    --day3:#9D8FD9;
+    --day3-soft:#2A2540;
+    --vip-1:#D9AF52;
+    --vip-2:#8A6A21;
+    --vip-ink:#241C08;
+    --success:#79C687;
+    --success-soft:#1E3324;
+    --danger:#E08277;
+    --shadow:0 16px 40px -14px rgba(0,0,0,0.55);
+    --shadow-sm:0 6px 18px -8px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Sora',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',Georgia,serif;
+    text-wrap:balance;
+    margin:0;
+  }
+  .mono{font-family:'Space Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums;}
+  button{font-family:inherit;}
+  a{color:inherit;}
+  ::selection{background:var(--accent); color:var(--accent-ink);}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px;}
+
+  .stage{
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
+      var(--bg);
+  }
+  .device{
+    width:100%;
+    max-width:428px;
+    min-height:100vh;
+    background:var(--bg);
+    position:relative;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  @media (min-width:640px){
+    .stage{ padding:40px 16px; }
+    .device{
+      min-height:844px;
+      height:844px;
+      border-radius:44px;
+      box-shadow:var(--shadow), 0 0 0 10px var(--surface-3), 0 0 0 12px var(--line-strong);
+    }
+    .device::after{
+      content:"";
+      position:absolute; top:14px; left:50%; transform:translateX(-50%);
+      width:120px; height:22px; border-radius:14px; background:var(--surface-3);
+      z-index:50;
+    }
+  }
+
+  .screen{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column;
+    overflow-y:auto;
+    -ms-overflow-style:none; scrollbar-width:none;
+  }
+  .screen::-webkit-scrollbar{display:none;}
+  .screen.active{display:flex;}
+  .screen.anim-in{ opacity:0; transform:scale(0.94); transition:none; }
+  .screen.anim-in.anim-settle{ opacity:1; transform:scale(1); transition:opacity .22s ease, transform .25s cubic-bezier(.2,.8,.2,1); }
+  @media (prefers-reduced-motion:reduce){
+    .screen.anim-in, .screen.anim-in.anim-settle{ opacity:1; transform:none; transition:none; }
+  }
+
+  /* ---------- Splash ---------- */
+  #screen-splash{
+    background:linear-gradient(165deg,#152521 0%, #0D1917 70%);
+    color:#F3EEE1;
+    align-items:center; justify-content:center;
+    text-align:center;
+    gap:18px;
+    padding:32px;
+  }
+  .splash-mark{
+    width:74px;height:74px;border-radius:20px;
+    background:linear-gradient(155deg, var(--vip-2), var(--vip-1));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px -8px rgba(0,0,0,0.6);
+  }
+  .splash-mark svg{width:38px;height:38px;}
+  #screen-splash .brand{
+    font-size:2rem; letter-spacing:0.01em; font-weight:600;
+  }
+  #screen-splash .tag{ color:#C9C4B4; font-size:0.95rem; max-width:26ch; }
+  .splash-poster{
+    display:none; max-width:80vw; max-height:44vh; width:auto; height:auto;
+    border-radius:18px; object-fit:contain;
+    box-shadow:0 16px 44px -10px rgba(0,0,0,0.65);
+    margin-bottom:4px;
+  }
+  /* Once a real event poster loads, it becomes the whole splash -- the
+     generic mark/brand/tagline step aside so the poster isn't competing
+     with placeholder branding for the same screen. */
+  #screen-splash.poster-mode .splash-mark,
+  #screen-splash.poster-mode .brand,
+  #screen-splash.poster-mode .tag{ display:none; }
+  #screen-splash.poster-mode .splash-poster{ display:block; }
+  .splash-loader{
+    width:120px;height:3px;border-radius:3px;background:rgba(243,238,225,0.15);
+    overflow:hidden; margin-top:8px;
+  }
+  .splash-loader span{
+    display:block; height:100%; width:40%; border-radius:3px;
+    background:linear-gradient(90deg, var(--vip-2), var(--vip-1));
+    animation:loadbar 1.4s ease-in-out infinite;
+  }
+  @keyframes loadbar{
+    0%{transform:translateX(-120%);}
+    100%{transform:translateX(340%);}
+  }
+  @media (prefers-reduced-motion:reduce){ .splash-loader span{animation:none; width:100%;} }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 20px 14px;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--line);
+    flex:0 0 auto;
+  }
+  .topbar .greet-eyebrow{font-size:0.78rem; color:var(--ink-soft);}
+  .topbar .greet{font-size:1.15rem; font-weight:700;}
+  .icon-btn{
+    width:38px;height:38px;border-radius:12px;
+    background:var(--surface); border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink); cursor:pointer;
+  }
+  .icon-btn svg{width:18px;height:18px;}
+  .back-row{
+    display:flex; align-items:center; gap:12px;
+    padding:16px 18px; background:var(--surface-2); border-bottom:1px solid var(--line);
+    flex:0 0 auto; position:relative;
+  }
+  .back-row h2{font-size:1.05rem; font-weight:700; flex:1; text-align:center; padding-right:38px;}
+
+  .scroll-body{flex:1 1 auto; overflow-y:auto; padding-bottom:28px;}
+
+  /* ---------- Banner / sponsor strip ---------- */
+  .banner{
+    margin:16px 18px 4px; border-radius:20px; overflow:hidden; position:relative;
+    height:168px; color:#fff;
+    background:linear-gradient(180deg, rgba(40,12,8,0.12), rgba(26,8,6,0.86)),
+      linear-gradient(135deg,#5C1E16,#26100B);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+  }
+  .banner .ev-name{font-size:1.28rem; font-weight:600; line-height:1.15; max-width:78%;}
+  .banner .ev-meta{font-size:0.8rem; color:#F1DFC9; margin-top:4px; max-width:78%;}
+  /* Small badge showing the event's own poster art (cropped, no black
+     letterbox bars) in the corner of the banner -- only appears when
+     event.config.js sets LOGO_DATA_URI, same opt-in pattern as the splash
+     poster below. */
+  .banner .ev-logo{
+    position:absolute; top:14px; right:14px; width:58px; height:58px; border-radius:14px;
+    overflow:hidden; border:1.5px solid rgba(255,214,140,0.55);
+    box-shadow:0 4px 14px rgba(0,0,0,0.4); background:#180A07;
+  }
+  .banner .ev-logo img{width:100%;height:100%;object-fit:cover;}
+  .sponsor-block{margin:20px 18px 6px;}
+
+  /* Each sponsor tier gets its own standalone box -- a consistent shell
+     (padding, radius, border) with only the accent colour changing per
+     tier, so "Co-Presented By" through "Supported By" read as one
+     designed system rather than four different ad-hoc treatments. */
+  .sponsor-tier-box{
+    border-radius:18px; padding:14px 14px 16px; margin-bottom:12px;
+    border:1px solid var(--line); background:var(--surface);
+  }
+  .sponsor-tier-box:last-child{margin-bottom:0;}
+  .sponsor-tier-box.tier-title{
+    background:color-mix(in srgb, var(--vip-2) 14%, var(--surface));
+    border-color:color-mix(in srgb, var(--vip-1) 45%, var(--line));
+  }
+  .sponsor-tier-box.tier-associate{
+    background:color-mix(in srgb, var(--day3) 10%, var(--surface));
+    border-color:color-mix(in srgb, var(--day3) 35%, var(--line));
+  }
+  .sponsor-tier-box.tier-powered{
+    background:color-mix(in srgb, var(--day1) 9%, var(--surface));
+    border-color:color-mix(in srgb, var(--day1) 32%, var(--line));
+  }
+  .sponsor-tier-box.tier-partner{
+    background:var(--surface-2);
+    border-color:var(--line);
+  }
+  .sponsor-tier-label{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.09em;
+    color:var(--ink-faint); font-weight:700; margin:0 0 10px;
+  }
+  .tier-title .sponsor-tier-label{color:var(--vip-1);}
+  .tier-associate .sponsor-tier-label{color:var(--day3);}
+  .tier-powered .sponsor-tier-label{color:var(--day1);}
+
+  /* One shared line under the "Co-Presented By" heading instead of
+     repeating "Presenting partner of <event>" on every single card. */
+  .sponsor-tier-sub{
+    font-size:0.72rem; color:var(--ink-soft); margin:-4px 0 10px;
+  }
+
+  /* Title (Co-Presented By) sponsors sit two to a row -- each card is
+     mostly logo, with just the sponsor's name underneath (no repeated
+     boilerplate line per card -- see .sponsor-tier-sub above). */
+  #title-sponsor-list{ display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; }
+  .sponsor-title-card{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    gap:8px; padding:12px 8px 10px; border-radius:14px;
+    background:var(--surface); border:1px solid color-mix(in srgb, var(--vip-1) 30%, var(--line));
+    box-shadow:var(--shadow-sm); cursor:pointer;
+  }
+  .sponsor-title-card .mark{
+    width:88px;height:88px;border-radius:14px; flex:0 0 auto;
+    background:linear-gradient(150deg, var(--vip-2), var(--vip-1));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; color:var(--vip-ink); font-size:1.4rem;
+    overflow:hidden;
+  }
+  .sponsor-title-card .mark img{ width:100%; height:100%; object-fit:contain; background:#fff; border-radius:inherit; }
+  .sponsor-title-card .name{font-family:'Fraunces',serif; font-size:0.94rem; font-weight:600; line-height:1.2;}
+  .sponsor-title-card .role{font-size:0.66rem; color:var(--ink-soft); margin-top:1px; line-height:1.25;}
+
+  /* One consistent tile shape for every logo below Title tier: same
+     fixed height and rounded box regardless of how each sponsor's raw
+     logo image is cropped, with the logo scaled to fit *inside* rather
+     than cropped -- so a wide banner-style logo and a square one still
+     end up looking like they belong to the same wall. */
+  .sponsor-logo-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr));
+    gap:9px;
+  }
+  .sponsor-logo-grid.grid-compact{grid-template-columns:repeat(auto-fill, minmax(78px, 1fr));}
+  /* Associate tier is fixed at 2-per-row -- with only a handful of logos,
+     auto-fill would otherwise squeeze 3 onto one row and leave a lonely
+     4th on its own line, which looks unbalanced. */
+  .sponsor-logo-grid.grid-2col{grid-template-columns:repeat(2, 1fr);}
+  .grid-2col .sp-tile{height:74px;}
+  .sp-tile{
+    height:60px; border-radius:12px; background:#fff; border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; padding:6px;
+    cursor:pointer; overflow:hidden;
+  }
+  .grid-compact .sp-tile{height:50px; border-radius:10px; padding:4px;}
+  .sp-tile img{ max-width:100%; max-height:100%; object-fit:contain; }
+  .sp-tile .initials{
+    font-weight:700; color:var(--ink-soft); font-size:0.72rem; text-align:center; line-height:1.15;
+  }
+  .sp-more{font-size:0.75rem; color:var(--ink-faint); align-self:center;}
+  .sponsor-sheet-logo{width:56px;height:56px;border-radius:14px; object-fit:cover; margin-bottom:12px;
+    background:linear-gradient(150deg, var(--vip-2), var(--vip-1)); display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; color:var(--vip-ink); font-size:1.3rem;}
+  .sponsor-sheet-logo img{width:100%;height:100%;object-fit:cover;border-radius:inherit;}
+
+  /* ---------- Section headers ---------- */
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin:22px 18px 10px;
+  }
+  .section-head h3{font-size:1.02rem; font-weight:700;}
+  .section-head .count{font-size:0.78rem; color:var(--ink-faint);}
+  .h-scroll{display:flex; gap:12px; overflow-x:auto; padding:2px 18px 10px; scroll-snap-type:x proximity;}
+  .h-scroll::-webkit-scrollbar{display:none;}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:2px 18px 10px;}
+
+  /* ---------- Pass card ---------- */
+  .pcard{
+    position:relative; flex:0 0 auto; width:230px; min-height:176px;
+    border-radius:18px; padding:16px 16px 46px; cursor:pointer;
+    background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow-sm);
+    scroll-snap-align:start;
+    display:flex; flex-direction:column; gap:6px;
+    transition:transform .15s ease;
+  }
+  .pcard:active{transform:scale(0.98);}
+  .pcard .tag{
+    align-self:flex-start; font-size:0.68rem; font-weight:700; letter-spacing:0.03em;
+    padding:3px 9px; border-radius:999px; text-transform:uppercase;
+  }
+  .pcard.day1 .tag{background:var(--day1-soft); color:var(--day1);}
+  .pcard.day2 .tag{background:var(--day2-soft); color:var(--day2);}
+  .pcard .ptitle{font-size:1.02rem; font-weight:700; line-height:1.2; margin-top:2px;}
+  .pcard .pdesc{font-size:0.8rem; color:var(--ink-soft); line-height:1.3;}
+  .pcard .pstatus{
+    position:absolute; left:16px; right:16px; bottom:14px;
+    font-size:0.72rem; font-weight:600; display:flex; align-items:center; gap:6px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%; flex:0 0 auto;}
+  .dot.locked{background:var(--ink-faint);}
+  .dot.active{background:var(--success); box-shadow:0 0 0 3px var(--success-soft);}
+  .dot.used{background:var(--ink-faint);}
+  .dot.expired{background:var(--danger);}
+
+  .pcard.compact{width:auto; min-height:132px; padding:12px 12px 36px;}
+  .pcard.compact .ptitle{font-size:0.88rem;}
+  .pcard.compact .pdesc{
+    font-size:0.72rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .pcard.compact .pstatus{left:12px; right:12px; bottom:10px; font-size:0.66rem;}
+
+  /* VIP gets a thin gold top edge + a small tag, not a different layout --
+     so a member without a VIP pass sees exactly the same card shape. */
+  .pcard.vip-mark{ box-shadow: inset 0 3px 0 var(--vip-1), var(--shadow-sm); }
+  .tag-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .tag.tag-vip{background:var(--vip-2); color:var(--vip-ink);}
+  .tag.tag-extra, .tag.tag-allaccess{background:var(--surface-3); color:var(--ink-soft);}
+
+  /* ---------- Accordion (category sections) ---------- */
+  .acc-section{margin:0 0 4px;}
+  .acc-head{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 18px; background:none; border:none; cursor:pointer; text-align:left; color:inherit;
+  }
+  .acc-head .acc-title{font-size:1.02rem; font-weight:700;}
+  .acc-head .acc-right{display:flex; align-items:center; gap:8px;}
+  .acc-head .acc-count{font-size:0.78rem; color:var(--ink-faint);}
+  .acc-head .acc-dot{width:7px;height:7px;border-radius:50%; background:var(--success); box-shadow:0 0 0 3px var(--success-soft);}
+  .acc-head .chev{width:16px;height:16px; color:var(--ink-faint); transition:transform .22s ease;}
+  .acc-section.open .acc-head .chev{transform:rotate(180deg);}
+  .acc-body{
+    display:grid; grid-template-rows:0fr; transition:grid-template-rows .28s ease;
+  }
+  .acc-section.open .acc-body{ grid-template-rows:1fr; }
+  .acc-body > div{ overflow:hidden; }
+  @media (prefers-reduced-motion:reduce){ .acc-body{transition:none;} }
+
+  /* Deliberately smaller than a regular entry-coupon card (width/height
+     trimmed down, no bottom status bar) -- this is a bonus extra, not the
+     main thing on the screen, and a smaller card leaves more visual room
+     for the sponsor line right below it. */
+  .pcard.lucky{
+    width:168px; min-height:118px; padding:12px 12px 14px;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--accent) 14%, transparent) 10px 20px),
+      var(--surface-2);
+    border-style:dashed; border-color:var(--line-strong);
+    align-items:center; text-align:center; justify-content:center; gap:6px;
+  }
+  .pcard.lucky .lock-ic{
+    width:28px;height:28px;border-radius:50%; background:var(--surface);
+    display:flex;align-items:center;justify-content:center; border:1px solid var(--line-strong);
+  }
+  .pcard.lucky .lock-ic svg{width:13px;height:13px;}
+  .pcard.lucky .ptitle{font-size:0.86rem;}
+  .pcard.lucky .pdesc{
+    font-size:0.7rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border:none; border-radius:14px; padding:14px 18px; font-size:0.92rem; font-weight:700;
+    cursor:pointer; width:100%;
+  }
+  .btn-primary{background:var(--accent); color:var(--accent-ink);}
+  .btn-primary:disabled{background:var(--surface-3); color:var(--ink-faint); cursor:not-allowed;}
+  .btn-ghost{background:transparent; color:var(--ink); border:1px solid var(--line-strong);}
+  .btn-danger-ghost{background:transparent; color:var(--danger); border:1px solid color-mix(in srgb, var(--danger) 40%, transparent);}
+  .btn-sm{padding:9px 14px; font-size:0.8rem; width:auto; border-radius:10px;}
+
+  /* ---------- Detail screen ---------- */
+  .detail-hero{ padding:22px 20px 18px; text-align:center; }
+  .detail-hero .tag{
+    display:inline-block; font-size:0.7rem; font-weight:700; letter-spacing:0.04em;
+    padding:4px 10px; border-radius:999px; text-transform:uppercase; margin-bottom:10px;
+  }
+  .qr-wrap{
+    width:212px; height:212px; margin:8px auto 14px; border-radius:20px;
+    background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .qr-wrap canvas{ image-rendering:pixelated; }
+  .qr-wrap.locked canvas{ filter:blur(6px) grayscale(1); opacity:0.5; }
+  .qr-wrap.used canvas, .qr-wrap.expired canvas{ filter:grayscale(1); opacity:0.35; }
+  .qr-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; text-align:center; padding:12px;
+  }
+  .qr-overlay .ic{width:30px;height:30px;color:var(--ink-soft);}
+  .qr-overlay .msg{font-size:0.82rem; font-weight:700;}
+  .qr-overlay .sub{font-size:0.72rem; color:var(--ink-soft);}
+  .countdown{font-family:'Space Mono',monospace; font-size:0.95rem; font-weight:700; letter-spacing:0.02em;}
+  .status-line{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:0.86rem; font-weight:600; margin-top:2px;
+  }
+
+  .info-card{
+    margin:0 20px 14px; background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; padding:14px 16px;
+  }
+  .info-row{display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:0.86rem;}
+  .info-row + .info-row{border-top:1px solid var(--line);}
+  .info-row .k{color:var(--ink-soft);}
+  .info-row .v{font-weight:600;}
+
+  .actions{ padding:6px 20px 24px; display:flex; flex-direction:column; gap:10px; }
+
+  /* ---------- Drawer (account/settings menu) ---------- */
+  .drawer-backdrop{
+    position:absolute; inset:0; background:rgba(10,14,13,0.5); z-index:110;
+    opacity:0; pointer-events:none; transition:opacity .22s ease;
+  }
+  .drawer-backdrop.active{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:absolute; top:0; left:0; bottom:0; width:80%; max-width:300px;
+    background:var(--surface); box-shadow:var(--shadow);
+    transform:translateX(-100%); transition:transform .28s cubic-bezier(.2,.8,.2,1);
+    display:flex; flex-direction:column; overflow-y:auto;
+  }
+  .drawer-backdrop.active .drawer{ transform:translateX(0); }
+  .drawer-head{
+    padding:26px 20px 18px; background:var(--surface-2); border-bottom:1px solid var(--line);
+  }
+  .drawer-head .mark{
+    width:40px;height:40px;border-radius:12px; margin-bottom:12px;
+    background:linear-gradient(155deg, var(--vip-2), var(--vip-1));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .drawer-head .mark svg{width:20px;height:20px;}
+  .drawer-head .dname{font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem;}
+  .drawer-head .dtier{font-size:0.78rem; color:var(--accent-2); font-weight:600; margin-top:2px;}
+  .drawer .list-row{padding:14px 20px;}
+
+  /* ---------- Sheet / modal ---------- */
+  .sheet-backdrop{
+    position:absolute; inset:0; background:rgba(10,14,13,0.5); z-index:80;
+    display:none; align-items:flex-end; justify-content:center;
+  }
+  .sheet-backdrop.active{display:flex;}
+  .sheet{
+    width:100%; background:var(--surface); border-radius:24px 24px 0 0;
+    padding:10px 22px 26px; max-height:82%; overflow-y:auto;
+    box-shadow:0 -16px 40px rgba(0,0,0,0.3);
+  }
+  .sheet-handle{width:38px;height:4px;border-radius:3px;background:var(--line-strong); margin:6px auto 16px;}
+  .sheet h3{font-size:1.08rem; margin-bottom:4px;}
+  .sheet .p{font-size:0.86rem; color:var(--ink-soft); margin-bottom:16px; line-height:1.4;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:0.78rem; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+  .field input{
+    width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--line-strong);
+    background:var(--surface-2); color:var(--ink); font-size:0.95rem; font-family:'Space Mono',monospace;
+  }
+  .otp-hint{
+    font-size:0.76rem; color:var(--accent-2); background:color-mix(in srgb, var(--accent) 14%, transparent);
+    padding:8px 10px; border-radius:10px; margin-bottom:14px;
+  }
+  .transfer-meter{font-size:0.78rem; color:var(--ink-soft); margin-bottom:14px; display:flex; justify-content:space-between;}
+
+  /* ---------- Account screen ---------- */
+  .member-card{
+    margin:16px 18px; padding:22px 20px; border-radius:20px; color:#F3EEE1;
+    background:linear-gradient(145deg,#1D3A34,#0E1917);
+    box-shadow:var(--shadow-sm); position:relative; overflow:hidden;
+  }
+  .member-card::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%;
+    background:radial-gradient(circle, rgba(231,200,115,0.25), transparent 70%);
+  }
+  .member-card .mbrand{font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:#C9C4B4;}
+  .member-card .mname{font-family:'Fraunces',serif; font-size:1.3rem; margin:10px 0 2px;}
+  .member-card .mtier{font-size:0.8rem; color:var(--vip-2); font-weight:600;}
+  .member-card .mfoot{display:flex; justify-content:space-between; margin-top:22px; font-size:0.72rem; color:#B9B4A2;}
+  .list-row{
+    display:flex; align-items:center; gap:14px; padding:15px 20px;
+    border-bottom:1px solid var(--line); cursor:pointer;
+  }
+  .list-row .ic{width:36px;height:36px;border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex:0 0 auto;}
+  .list-row .lbl{flex:1; font-weight:600; font-size:0.92rem;}
+  .list-row svg.chev{width:16px;height:16px; color:var(--ink-faint);}
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav{
+    display:flex; border-top:1px solid var(--line); background:var(--surface-2); flex:0 0 auto;
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  }
+  .nav-btn{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; color:var(--ink-faint); font-size:0.68rem; font-weight:600; padding:6px 0; cursor:pointer;
+  }
+  .nav-btn svg{width:20px;height:20px;}
+  .nav-btn.active{color:var(--accent-2);}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:absolute; left:18px; right:18px; bottom:90px; z-index:200;
+    background:var(--ink); color:var(--bg); padding:13px 16px; border-radius:14px;
+    font-size:0.84rem; font-weight:600; box-shadow:var(--shadow-sm);
+    display:flex; align-items:center; gap:10px;
+    transform:translateY(20px); opacity:0; pointer-events:none;
+    transition:transform .25s ease, opacity .25s ease;
+  }
+  .toast.show{ transform:translateY(0); opacity:1; }
+
+  .lucky-reveal{
+    margin:0 20px 14px; padding:22px 18px; border-radius:18px; text-align:center;
+    background:linear-gradient(160deg, color-mix(in srgb, var(--vip-2) 25%, var(--surface)), var(--surface));
+    border:1px solid var(--vip-1);
+  }
+  .lucky-reveal .big{font-family:'Fraunces',serif; font-size:1.5rem; margin:8px 0 4px;}
+  .empty-note{margin:0 20px; padding:14px 16px; border-radius:14px; background:var(--surface-2); color:var(--ink-soft); font-size:0.82rem; text-align:center;}
+  .request-card{margin:0 20px 12px; padding:14px 16px; border-radius:16px; background:var(--surface); border:1px solid var(--vip-1);}
+  .request-card .rq-title{font-weight:700; font-size:0.92rem; margin-bottom:2px;}
+  .request-card .rq-sub{font-size:0.78rem; color:var(--ink-soft); margin-bottom:10px;}
+  .request-card .rq-actions{display:flex; gap:8px;}
+  .request-card .rq-actions .btn{flex:1;}
+  .load-note{margin:16px 18px; padding:14px 16px; border-radius:14px; background:var(--surface-2); color:var(--ink-soft); font-size:0.85rem;}
+  .load-note.err{background:color-mix(in srgb, var(--danger) 14%, transparent); color:var(--danger);}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="device" id="device">
+
+    <!-- SPLASH -->
+    <div class="screen active" id="screen-splash">
+      <img class="splash-poster" id="splash-poster" alt="">
+      <div class="splash-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#20180A" stroke-width="1.8"><path d="M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4"/></svg>
+      </div>
+      <div class="brand">GatePass</div>
+      <div class="tag">Your Horizon Fest membership is ready. Coupons and gate access — all in one link.</div>
+      <div class="splash-loader"><span></span></div>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen" id="screen-home">
+      <div class="topbar">
+        <button class="icon-btn" aria-label="Open menu" onclick="openDrawer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div style="flex:1;">
+          <div class="greet-eyebrow" id="home-date">Good evening</div>
+          <div class="greet" id="greet-name">Hi, there</div>
+        </div>
+        <button class="icon-btn" aria-label="Notifications" onclick="showToast('No new notifications')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        </button>
+      </div>
+      <div class="scroll-body">
+        <div class="banner">
+          <div class="ev-logo" id="event-logo-badge" style="display:none;"><img id="event-logo" alt=""></div>
+          <div class="ev-name" id="event-name">Loading event…</div>
+          <div class="ev-meta" id="event-meta"></div>
+        </div>
+
+        <div id="pending-requests"></div>
+
+        <div class="sponsor-block" id="sponsor-block" style="display:none;">
+          <div class="sponsor-tier-box tier-title" id="title-sponsor-box" style="display:none;">
+            <div class="sponsor-tier-label">Co-Presented By</div>
+            <div class="sponsor-tier-sub" id="title-sponsor-sub"></div>
+            <div id="title-sponsor-list"></div>
+          </div>
+
+          <div class="sponsor-tier-box tier-associate" id="associate-box" style="display:none;">
+            <div class="sponsor-tier-label">In Association With</div>
+            <div class="sponsor-logo-grid grid-2col" id="sponsor-associate"></div>
+          </div>
+
+          <div class="sponsor-tier-box tier-powered" id="powered-box" style="display:none;">
+            <div class="sponsor-tier-label">Powered By</div>
+            <div class="sponsor-logo-grid" id="sponsor-powered"></div>
+          </div>
+
+          <div class="sponsor-tier-box tier-partner" id="partners-box" style="display:none;">
+            <div class="sponsor-tier-label">Supported By</div>
+            <div class="sponsor-logo-grid grid-compact" id="sponsor-partners"></div>
+          </div>
+        </div>
+
+        <div id="accordions"></div>
+
+        <div id="grand-finale-section">
+          <div class="section-head">
+            <h3>Grand Finale</h3>
+            <span class="count" id="lucky-rule-hint">Announced on stage</span>
+          </div>
+          <div id="lucky-sponsor-line" style="display:none; margin:-4px 18px 10px; font-size:0.86rem; font-weight:700; color:var(--accent); align-items:center; gap:8px;"></div>
+          <div class="h-scroll" id="row-lucky"></div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-btn active" onclick="setNav(this,'home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg>
+          Home
+        </button>
+        <button class="nav-btn" onclick="setNav(this,'home'); showToast('Showing coupons on Home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 12h4M17 12h4"/></svg>
+          Coupons
+        </button>
+        <button class="nav-btn" onclick="setNav(this,'account'); showScreen('account')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.4-3.6 4.2-5.4 7-5.4S18.6 16.4 20 20"/></svg>
+          Account
+        </button>
+      </div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="screen" id="screen-detail">
+      <div class="back-row">
+        <button class="icon-btn" onclick="showScreen('home')" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <h2 id="detail-heading">Coupon</h2>
+      </div>
+      <div class="scroll-body" id="detail-body"></div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="screen" id="screen-account">
+      <div class="back-row">
+        <button class="icon-btn" onclick="showScreen('home')" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <h2>Account</h2>
+      </div>
+      <div class="scroll-body">
+        <div class="member-card">
+          <div class="mbrand" id="acc-brand">GatePass</div>
+          <div class="mname" id="acc-name">—</div>
+          <div class="mtier" id="acc-tier"></div>
+          <div class="mfoot"><span id="acc-id"></span><span>Valid for event dates</span></div>
+        </div>
+        <div class="list-row" onclick="showToast('Editing profile — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.3-3.4 4-5 7-5s5.7 1.6 7 5"/></svg></div>
+          <div class="lbl">My Account</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="showToast('Transfer history — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h13M17 7l-3-3M17 7l-3 3M20 17H7M7 17l3 3M7 17l3-3"/></svg></div>
+          <div class="lbl">Transfer History</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="showToast('Usage history — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></div>
+          <div class="lbl">Usage History</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="showToast('FAQ — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.2a2.5 2.5 0 0 1 4.9.8c0 1.6-2.2 1.8-2.4 3.2M12 17h.01"/></svg></div>
+          <div class="lbl">Help &amp; FAQ</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="showToast('Logged out — demo only')" style="border-bottom:none;">
+          <div class="ic" style="background:color-mix(in srgb, var(--danger) 16%, transparent);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="1.8"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3M16 17l5-5-5-5M21 12H9"/></svg></div>
+          <div class="lbl" style="color:var(--danger);">Log Out</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU DRAWER -->
+    <div class="drawer-backdrop" id="drawer-backdrop" onclick="if(event.target===this) closeDrawer()">
+      <div class="drawer">
+        <div class="drawer-head">
+          <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#20180A" stroke-width="1.8"><path d="M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4"/></svg></div>
+          <div class="dname" id="drawer-name">—</div>
+          <div class="dtier" id="drawer-tier"></div>
+        </div>
+        <div class="list-row" onclick="closeDrawer(); showScreen('account');">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.3-3.4 4-5 7-5s5.7 1.6 7 5"/></svg></div>
+          <div class="lbl">My Account</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="closeDrawer(); showToast('Transfer history — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h13M17 7l-3-3M17 7l-3 3M20 17H7M7 17l3 3M7 17l3-3"/></svg></div>
+          <div class="lbl">Transfer History</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="closeDrawer(); showToast('Restricted dates — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></div>
+          <div class="lbl">Restricted Dates</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="closeDrawer(); showToast('Notification settings — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+          <div class="lbl">Notifications</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="closeDrawer(); showToast('Help & FAQ — demo only')">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.2a2.5 2.5 0 0 1 4.9.8c0 1.6-2.2 1.8-2.4 3.2M12 17h.01"/></svg></div>
+          <div class="lbl">Help &amp; FAQ</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="list-row" onclick="closeDrawer(); showToast('Logged out — demo only')" style="border-bottom:none;">
+          <div class="ic" style="background:color-mix(in srgb, var(--danger) 16%, transparent);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="1.8"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3M16 17l5-5-5-5M21 12H9"/></svg></div>
+          <div class="lbl" style="color:var(--danger);">Log Out</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSFER SHEET -->
+    <div class="sheet-backdrop" id="sheet-backdrop" onclick="if(event.target===this) closeSheet()">
+      <div class="sheet" id="sheet-content"></div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var categoryMeta = {
+    vip:     { group:'allaccess', groupLabel:'All-Access',        tagLabel:'All Days', bg:'var(--surface-3)', fg:'var(--ink-soft)' },
+    general: { group:'general',   groupLabel:'General Admission', tagLabel:'All Days', bg:'var(--surface-3)', fg:'var(--ink-soft)' },
+    day1:    { group:'day1',      groupLabel:null,                 tagLabel:'Day 1',    bg:'var(--day1-soft)', fg:'var(--day1)' },
+    day2:    { group:'day2',      groupLabel:null,                 tagLabel:'Day 2',    bg:'var(--day2-soft)', fg:'var(--day2)' },
+    day3:    { group:'day3',      groupLabel:null,                 tagLabel:'Day 3',    bg:'var(--day3-soft)', fg:'var(--day3)' },
+    extra:   { group:'extra',     groupLabel:'Additional Benefits',tagLabel:'Benefit',  bg:'var(--surface-3)', fg:'var(--ink-soft)' }
+  };
+  var groupOrder = ['allaccess','general','day1','day2','day3','extra'];
+  var groupLabels = { allaccess:'All-Access', general:'General Admission', extra:'Additional Benefits' }; // day1/2/3 computed from real dates
+
+  var memberId = null;
+  var DATA = null;
+  var currentId = null;
+  var accOverride = {};
+  var qrRefreshTimer = null;
+
+  function resolveMemberId(){
+    var m = location.pathname.match(/\/app\/([^\/?#]+)/);
+    if(m) return decodeURIComponent(m[1]);
+    var q = new URLSearchParams(location.search).get('m');
+    return q || null;
+  }
+
+  function api(path, opts){
+    return fetch(path, opts).then(function(res){
+      return res.json().then(function(body){ return { status: res.status, body: body }; });
+    });
+  }
+
+  function fmtClock(ms){
+    var d = new Date(ms);
+    return d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' +
+           d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+  }
+  function fmtDuration(ms){
+    if(ms<0) ms=0;
+    var h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000), s=Math.floor((ms%60000)/1000);
+    if(h>0) return h+"h "+String(m).padStart(2,'0')+"m";
+    return String(m).padStart(2,'0')+"m "+String(s).padStart(2,'0')+"s";
+  }
+
+  function stateMeta(s){
+    return {
+      locked:{dot:'locked', label:'Locked'},
+      active:{dot:'active', label:'Ready to scan'},
+      used:{dot:'used', label:'Verified'},
+      expired:{dot:'expired', label:'Expired'},
+      transferred:{dot:'used', label:'Transferred away'}
+    }[s] || {dot:'locked', label:s};
+  }
+
+  /* ---------------- boot ---------------- */
+  function boot(){
+    memberId = resolveMemberId();
+    if(!memberId){
+      document.querySelector('#screen-splash .tag').textContent =
+        'No member link provided. Open this app as /app/<memberId> -- the link an organiser would send each member.';
+      return;
+    }
+    loadSummary().then(function(ok){
+      // A poster gets a bit longer on screen than the plain splash so it
+      // actually registers, instead of flashing past in under a second.
+      var hasPoster = document.getElementById('screen-splash').classList.contains('poster-mode');
+      if(ok) setTimeout(function(){ showScreen('home'); }, hasPoster ? 2000 : 1200);
+    });
+  }
+
+  function loadSummary(){
+    return api('/api/members/'+encodeURIComponent(memberId)+'/summary').then(function(r){
+      if(r.status !== 200 || !r.body.ok){
+        document.querySelector('#screen-splash .tag').textContent =
+          'Could not load this member (' + (r.body && r.body.error || 'error') + '). Check the link.';
+        return false;
+      }
+      DATA = r.body;
+      // Show the event's own poster as the very first thing on screen,
+      // ahead of the generic GatePass splash branding, whenever the
+      // organiser has set one (event.config.js -> POSTER_DATA_URI).
+      if(DATA.event && DATA.event.poster_data_uri){
+        var posterEl = document.getElementById('splash-poster');
+        posterEl.src = DATA.event.poster_data_uri;
+        document.getElementById('screen-splash').classList.add('poster-mode');
+      }
+      renderAll();
+      return true;
+    }).catch(function(err){
+      document.querySelector('#screen-splash .tag').textContent = 'Could not reach the server: ' + err.message;
+      return false;
+    });
+  }
+
+  function renderAll(){
+    if(!DATA) return;
+    if(DATA.event && DATA.event.logo_data_uri){
+      document.getElementById('event-logo').src = DATA.event.logo_data_uri;
+      document.getElementById('event-logo-badge').style.display = '';
+    }
+    document.getElementById('event-name').textContent = DATA.event.name;
+    document.getElementById('event-meta').textContent =
+      (DATA.event.venue || '') + ' · ' + new Date(DATA.event.start_at).toLocaleDateString(undefined,{month:'short',day:'numeric'}) +
+      ' - ' + new Date(DATA.event.end_at).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    document.getElementById('greet-name').innerHTML = 'Hi, ' + DATA.member.name +
+      (DATA.member.isVip ? ' <span style="display:inline-block; vertical-align:middle; font-size:0.62rem; font-weight:700; letter-spacing:0.03em; text-transform:uppercase; padding:2px 8px; border-radius:999px; background:var(--vip-2); color:var(--vip-ink);">VIP</span>' : '');
+    var hr = new Date().getHours();
+    document.getElementById('home-date').textContent = hr < 12 ? 'Good morning' : (hr < 17 ? 'Good afternoon' : 'Good evening');
+
+    renderSponsors();
+    renderHome();
+    renderAccountAndDrawer();
+    renderLuckyHint();
+    renderPendingRequests();
+  }
+
+  function renderPendingRequests(){
+    var el = document.getElementById('pending-requests');
+    var list = DATA.pendingRequests || [];
+    if(!list.length){ el.innerHTML = ''; return; }
+    el.innerHTML = list.map(function(r){
+      return '<div class="request-card">' +
+        '<div class="rq-title">'+r.requesterName+' wants your '+r.passTitle+'</div>' +
+        '<div class="rq-sub">Requested via claim link · '+r.requesterWhatsapp+'</div>' +
+        '<div class="rq-actions">' +
+          '<button class="btn btn-primary btn-sm" style="flex:1;" onclick="decideRequest(\''+r.requestId+'\',\'approve\')">Approve</button>' +
+          '<button class="btn btn-danger-ghost btn-sm" style="flex:1;" onclick="decideRequest(\''+r.requestId+'\',\'reject\')">Reject</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.decideRequest = function(requestId, action){
+    api('/api/transfer-requests/'+requestId+'/'+action, { method:'POST' }).then(function(r){
+      if(!r.body.ok){ showToast('Could not update: ' + (r.body.error || 'error')); return; }
+      if(action === 'approve'){
+        showToast('Approved -- they' + "’" + 'll get a WhatsApp code to finish (' + (r.body.devNote || '') + ')');
+      } else {
+        showToast('Request rejected');
+      }
+      loadSummary();
+    });
+  };
+
+  function luckyRuleText(){
+    var r = DATA.luckyRule;
+    if(r && r.ruleNote) return r.ruleNote;
+    if(r && r.revealAt) return 'Reveals around ' + fmtClock(r.revealAt);
+    return 'Announced on stage';
+  }
+
+  function renderLuckyHint(){
+    // A member who doesn't currently hold at least 2 complete coupons isn't
+    // eligible for the Lucky Coupon at all -- DATA.lucky comes back null
+    // from the server for them, and the whole section disappears rather
+    // than showing an empty/locked card. This re-checks on every reload,
+    // so someone who transfers down to just their own coupon loses this
+    // section immediately, and someone freshly given a 2nd coupon gains it.
+    var section = document.getElementById('grand-finale-section');
+    if(!DATA.lucky){ section.style.display = 'none'; return; }
+    section.style.display = '';
+
+    var full = luckyRuleText();
+    var short = full.length > 34 ? full.slice(0, 33) + '…' : full;
+    document.getElementById('lucky-rule-hint').textContent =
+      (DATA.lucky && DATA.lucky.revealed) ? 'Revealed!' : short;
+
+    var sponsorLine = document.getElementById('lucky-sponsor-line');
+    var title = DATA.sponsors.filter(function(s){ return s.tier==='title'; })[0];
+    if(title){
+      sponsorLine.style.display = 'flex';
+      sponsorLine.innerHTML =
+        (title.logoDataUri ? '<img src="'+title.logoDataUri+'" alt="" style="width:22px;height:22px;border-radius:6px;object-fit:cover;">' : '') +
+        '<span>Grand Finale presented by ' + title.name + '</span>';
+    } else {
+      sponsorLine.style.display = 'none';
+    }
+  }
+
+  function sponsorInitials(name){
+    return name.split(' ').filter(function(w){ return /^[A-Za-z]/.test(w); })
+      .map(function(w){ return w[0]; }).slice(0,2).join('').toUpperCase();
+  }
+  function sponsorMarkHTML(s){
+    return s.logoDataUri ? '<img src="'+s.logoDataUri+'" alt="">' : sponsorInitials(s.name);
+  }
+  function sponsorTileHTML(s){
+    return '<div class="sp-tile" title="'+s.name+'" onclick="openSponsorDetail(\''+s.id+'\')">'+
+      (s.logoDataUri ? '<img src="'+s.logoDataUri+'" alt="'+s.name+'">' : '<div class="initials">'+sponsorInitials(s.name)+'</div>') +
+    '</div>';
+  }
+
+  function renderSponsors(){
+    var title = DATA.sponsors.filter(function(s){ return s.tier==='title'; });
+    var associate = DATA.sponsors.filter(function(s){ return s.tier==='associate'; });
+    var powered = DATA.sponsors.filter(function(s){ return s.tier==='powered'; });
+    var partners = DATA.sponsors.filter(function(s){ return s.tier==='partner'; });
+
+    document.getElementById('sponsor-block').style.display = DATA.sponsors.length ? '' : 'none';
+
+    document.getElementById('title-sponsor-box').style.display = title.length ? '' : 'none';
+    // The generic "Presenting partner of <event>" line is shown ONCE for
+    // the whole tier (below), not repeated on every card -- each card
+    // below only adds its own tagline if the sponsor actually has one.
+    document.getElementById('title-sponsor-sub').textContent = title.length ? ('Presenting partners of ' + DATA.event.name) : '';
+    // Every title-tier sponsor gets its own full card -- co-presenting
+    // sponsors are common in real events, so this never hides one behind
+    // another the way a single fixed slot would.
+    document.getElementById('title-sponsor-list').innerHTML = title.map(function(s){
+      return '<div class="sponsor-title-card" onclick="openSponsorDetail(\''+s.id+'\')">' +
+        '<div class="mark">'+sponsorMarkHTML(s)+'</div>' +
+        '<div class="name">'+s.name+'</div>' +
+        (s.tagline ? '<div class="role">'+s.tagline+'</div>' : '') +
+      '</div>';
+    }).join('');
+
+    document.getElementById('associate-box').style.display = associate.length ? '' : 'none';
+    document.getElementById('sponsor-associate').innerHTML = associate.map(sponsorTileHTML).join('');
+
+    document.getElementById('powered-box').style.display = powered.length ? '' : 'none';
+    document.getElementById('sponsor-powered').innerHTML = powered.map(sponsorTileHTML).join('');
+
+    document.getElementById('partners-box').style.display = partners.length ? '' : 'none';
+    document.getElementById('sponsor-partners').innerHTML = partners.map(sponsorTileHTML).join('');
+  }
+
+  window.openSponsorDetail = function(sponsorId){
+    var s = DATA.sponsors.filter(function(x){ return x.id===sponsorId; })[0];
+    if(!s) return;
+    var tierLabel = { title:'Title Sponsor', associate:'In Association With', powered:'Powered By', partner:'Supported By' }[s.tier] || 'Sponsor';
+    var sheet = document.getElementById('sheet-content');
+    var links = '';
+    if(s.websiteUrl) links += '<a class="btn btn-primary" style="display:block; text-decoration:none; text-align:center; margin-top:10px;" href="'+s.websiteUrl+'" target="_blank" rel="noopener">Visit website</a>';
+    if(s.contactUrl) links += '<a class="btn btn-ghost" style="display:block; text-decoration:none; text-align:center; margin-top:10px;" href="'+s.contactUrl+'" target="_blank" rel="noopener">Contact '+s.name+'</a>';
+    sheet.innerHTML =
+      '<div class="sheet-handle"></div>' +
+      '<div class="sponsor-sheet-logo">'+sponsorMarkHTML(s)+'</div>' +
+      '<h3>'+s.name+'</h3>' +
+      '<div class="p">'+tierLabel+(s.tagline ? ' · ' + s.tagline : '')+'</div>' +
+      (links || '<div class="p" style="opacity:0.7;">No extra details added by the organiser yet.</div>');
+    openSheet();
+  };
+
+  // VIP is a per-MEMBER flag now (DATA.member.isVip), not a pass category --
+  // it shows once on the member's own profile (see renderAccountAndDrawer),
+  // not repeated on every coupon card. Cards just get a colored left edge
+  // for day-coupons so they're still tellable apart at a glance, relying on
+  // the accordion section header (Day 1 / Day 2 / ...) to say what each is.
+  var DAY_ACCENT = { day1:true, day2:true, day3:true };
+  function cardHTML(p){
+    var cm = categoryMeta[p.category] || categoryMeta.general;
+    var accentStyle = DAY_ACCENT[p.category] ? ' style="border-left:4px solid '+cm.fg+';"' : '';
+    var meta = stateMeta(p.state);
+    return '<div class="pcard compact"'+accentStyle+' onclick="openDetail(\''+p.id+'\')">' +
+      '<div class="ptitle">'+(p.icon ? p.icon+' ' : '')+p.title+'</div>' +
+      '<div class="pdesc">'+(p.description||'')+'</div>' +
+      '<div class="pstatus"><span class="dot '+meta.dot+'"></span>'+meta.label+'</div>' +
+    '</div>';
+  }
+
+  window.toggleAcc = function(cat){
+    var el = document.querySelector('.acc-section[data-cat="'+cat+'"]');
+    accOverride[cat] = !el.classList.contains('open');
+    renderHome();
+  };
+
+  function dayNumberLabel(cat, list){
+    var n = cat.replace('day','');
+    var d = new Date(list[0].windowStart);
+    return 'Day ' + n + ' · ' + d.toLocaleDateString(undefined,{weekday:'short'});
+  }
+
+  function renderHome(){
+    var groups = {};
+    groupOrder.forEach(function(g){ groups[g] = []; });
+    DATA.passes.forEach(function(p){
+      var g = (categoryMeta[p.category] || categoryMeta.extra).group;
+      if(!groups[g]) groups[g] = [];
+      groups[g].push(p);
+    });
+
+    var anyOpen = false;
+    var html = groupOrder.map(function(cat){
+      var list = groups[cat];
+      if(!list || !list.length) return '';
+      var label = groupLabels[cat] || dayNumberLabel(cat, list);
+      var hasActive = list.some(function(p){ return p.state==='active'; });
+      var open = accOverride.hasOwnProperty(cat) ? accOverride[cat] : hasActive;
+      if(open) anyOpen = true;
+      return '<div class="acc-section'+(open?' open':'')+'" data-cat="'+cat+'">' +
+        '<button class="acc-head" onclick="toggleAcc(\''+cat+'\')">' +
+          '<span class="acc-title">'+label+'</span>' +
+          '<span class="acc-right">' +
+            (hasActive ? '<span class="acc-dot" title="Ready to scan"></span>' : '') +
+            '<span class="acc-count">'+list.length+' '+(list.length===1?'coupon':'coupons')+'</span>' +
+            '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</span>' +
+        '</button>' +
+        '<div class="acc-body"><div><div class="grid-2">'+list.map(cardHTML).join('')+'</div></div></div>' +
+      '</div>';
+    }).join('');
+
+    var wrap = document.getElementById('accordions');
+    wrap.innerHTML = html;
+    if(!anyOpen && Object.keys(accOverride).length === 0){
+      var first = wrap.querySelector('.acc-section');
+      if(first) first.classList.add('open');
+    }
+
+    document.getElementById('row-lucky').innerHTML = luckyCardHTML();
+  }
+
+  function luckyCardHTML(){
+    if(!DATA.lucky){
+      return '<div class="empty-note" style="margin:0 18px;">No Lucky Coupon on this membership.</div>';
+    }
+    if(!DATA.lucky.revealed){
+      return '<div class="pcard lucky" onclick="openDetail(\'lucky\')">' +
+        '<div class="lock-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>' +
+        '<div class="ptitle">Lucky Coupon</div>' +
+        '<div class="pdesc">'+luckyRuleText()+'</div>' +
+      '</div>';
+    }
+    return '<div class="pcard lucky" onclick="openDetail(\'lucky\')" style="border-style:solid;border-color:var(--vip-1);">' +
+      '<div class="lock-ic" style="background:var(--vip-2);border-color:var(--vip-1);">🎉</div>' +
+      '<div class="ptitle">You won!</div>' +
+      '<div class="pdesc">'+DATA.lucky.prize+'</div>' +
+    '</div>';
+  }
+
+  function renderAccountAndDrawer(){
+    // VIP is a flag the organiser sets on the member directly -- it never
+    // comes from any particular pass they hold, and it doesn't travel with
+    // a transfer (the receiver is a separate member with their own flag).
+    var isVip = !!(DATA.member && DATA.member.isVip);
+    var tierLabel = isVip ? 'VIP Member · ' + DATA.event.name : 'Member · ' + DATA.event.name;
+    document.getElementById('acc-brand').textContent = 'GatePass · ' + DATA.event.name;
+    document.getElementById('acc-name').textContent = DATA.member.name;
+    document.getElementById('acc-tier').textContent = isVip ? 'VIP Member' : 'Member';
+    document.getElementById('acc-id').textContent = 'ID ' + DATA.member.id;
+    document.getElementById('drawer-name').textContent = DATA.member.name;
+    document.getElementById('drawer-tier').textContent = tierLabel;
+  }
+
+  /* ---------------- detail screen ---------------- */
+  window.openDetail = function(id){
+    currentId = id;
+    stopQrRefresh();
+    renderDetail();
+    showScreen('detail');
+  };
+
+  function findPass(id){ return DATA.passes.filter(function(p){ return p.id===id; })[0]; }
+
+  function renderDetail(){
+    if(currentId === 'lucky') return renderLuckyDetail();
+    var p = findPass(currentId);
+    if(!p) return;
+    document.getElementById('detail-heading').textContent = (p.icon ? p.icon+' ' : '') + p.title;
+
+    // VIP is shown on the member's profile, not repeated per-coupon here --
+    // see renderAccountAndDrawer(). No per-pass tag any more.
+    var tagsHtml = '';
+
+    var canTransfer = p.transfersUsed < p.transferLimit && ['locked','active'].indexOf(p.state) !== -1;
+
+    var body = document.getElementById('detail-body');
+
+    if(p.state === 'locked'){
+      body.innerHTML =
+        '<div class="detail-hero">' + tagsHtml +
+        '<div class="qr-wrap locked"><canvas></canvas><div class="qr-overlay">' +
+          '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' +
+          '<div class="msg countdown" id="lock-countdown">--</div><div class="sub">Come back closer to gate time</div>' +
+        '</div></div></div>' +
+        infoCardHTML(p) +
+        '<div class="actions">' +
+          '<button class="btn btn-ghost" '+(canTransfer?'':'disabled')+' onclick="openTransfer(\''+p.id+'\')">Transfer to someone</button>' +
+        '</div>';
+      tickLockCountdown(p);
+      return;
+    }
+
+    if(p.state === 'used' || p.state === 'expired' || p.state === 'transferred'){
+      var msg = p.state==='used' ? ('Verified at gate' + (p.usedAt ? ' · '+fmtClock(p.usedAt) : ''))
+               : p.state==='expired' ? 'Window expired'
+               : 'Transferred to another member';
+      var color = p.state==='used' ? 'var(--success)' : 'var(--danger)';
+      body.innerHTML =
+        '<div class="detail-hero">' + tagsHtml +
+        '<div class="qr-wrap '+p.state+'"><canvas></canvas><div class="qr-overlay">' +
+          '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="1.8"><path d="M4 12l5 5L20 6"/></svg>' +
+          '<div class="msg" style="color:'+color+';">'+msg+'</div>' +
+        '</div></div></div>' +
+        infoCardHTML(p) +
+        '<div class="actions">' +
+          '<button class="btn btn-ghost" '+(canTransfer?'':'disabled')+' onclick="openTransfer(\''+p.id+'\')">Transfer to someone</button>' +
+        '</div>';
+      return;
+    }
+
+    // active -- mint a real, signed, short-lived QR from the server
+    body.innerHTML =
+      '<div class="detail-hero">' + tagsHtml +
+      '<div class="qr-wrap active" id="qr-holder"><div class="load-note">Getting your gate code…</div></div>' +
+      '<div class="status-line" id="qr-statusline"></div>' +
+      '</div>' +
+      infoCardHTML(p) +
+      '<div class="actions" id="detail-actions">' +
+        '<button class="btn btn-ghost" '+(canTransfer?'':'disabled')+' onclick="openTransfer(\''+p.id+'\')">Transfer to someone</button>' +
+      '</div>';
+    mintQr(p.id);
+    qrRefreshTimer = setInterval(function(){ mintQr(p.id); }, 4*60*1000);
+  }
+
+  function infoCardHTML(p){
+    return '<div class="info-card">' +
+      '<div class="info-row"><span class="k">Description</span><span class="v" style="text-align:right; max-width:60%;">'+(p.description||'')+'</span></div>' +
+      '<div class="info-row"><span class="k">Valid window</span><span class="v mono" style="font-size:0.78rem;">'+fmtClock(p.windowStart)+' – '+fmtClock(p.windowEnd)+'</span></div>' +
+      '<div class="info-row"><span class="k">Transfers used</span><span class="v">'+p.transfersUsed+' of '+p.transferLimit+'</span></div>' +
+    '</div>';
+  }
+
+  var lockTickTimer = null;
+  function tickLockCountdown(p){
+    clearInterval(lockTickTimer);
+    function tick(){
+      var el = document.getElementById('lock-countdown');
+      if(!el) { clearInterval(lockTickTimer); return; }
+      el.textContent = 'Activates in ' + fmtDuration(p.activatesAt - Date.now());
+    }
+    tick();
+    lockTickTimer = setInterval(tick, 1000);
+  }
+
+  function stopQrRefresh(){
+    clearInterval(qrRefreshTimer); qrRefreshTimer = null;
+    clearInterval(lockTickTimer); lockTickTimer = null;
+  }
+
+  function mintQr(passId){
+    api('/api/passes/'+encodeURIComponent(passId)+'/qr', { method:'POST' }).then(function(r){
+      if(currentId !== passId) return; // navigated away
+      var holder = document.getElementById('qr-holder');
+      if(!holder) return;
+      if(r.status !== 200 || !r.body.ok){
+        holder.innerHTML = '<div class="load-note err">This coupon is no longer active -- reopen it to refresh.</div>';
+        loadSummary();
+        return;
+      }
+      holder.innerHTML = '<img src="'+r.body.qrSvgDataUri+'" alt="Gate QR code" style="width:180px;height:180px;">';
+      var line = document.getElementById('qr-statusline');
+      if(line){
+        var p = findPass(passId);
+        line.className = 'status-line'; line.style.color = 'var(--success)';
+        line.innerHTML = '<span class="dot active"></span>Show this QR at the gate · closes in <span class="countdown" id="qr-window-countdown">'+fmtDuration(p.windowEnd-Date.now())+'</span>';
+      }
+      var actions = document.getElementById('detail-actions');
+      if(actions && !document.getElementById('verify-link-btn')){
+        var a = document.createElement('a');
+        a.id = 'verify-link-btn'; a.className = 'btn btn-primary'; a.href = r.body.verifyUrl; a.target = '_blank'; a.rel='noopener';
+        a.textContent = 'Open gate-check link (what a scan opens)';
+        actions.insertBefore(a, actions.firstChild);
+      } else if(document.getElementById('verify-link-btn')){
+        document.getElementById('verify-link-btn').href = r.body.verifyUrl;
+      }
+    }).catch(function(){
+      var holder = document.getElementById('qr-holder');
+      if(holder) holder.innerHTML = '<div class="load-note err">Could not reach the server.</div>';
+    });
+  }
+
+  function renderLuckyDetail(){
+    document.getElementById('detail-heading').textContent = 'Lucky Coupon';
+    var body = document.getElementById('detail-body');
+    if(!DATA.lucky){
+      body.innerHTML = '<div class="empty-note">No Lucky Coupon on this membership.</div>';
+      return;
+    }
+    if(!DATA.lucky.revealed){
+      body.innerHTML =
+        '<div class="detail-hero"><div class="qr-wrap locked"><canvas></canvas><div class="qr-overlay">' +
+        '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' +
+        '<div class="msg">Not revealed yet</div><div class="sub">Right here, for every member, at once</div>' +
+        '</div></div></div>' +
+        '<div class="empty-note"><strong>Rule:</strong> '+luckyRuleText()+'<br><br>Every full-event coupon holder gets one Lucky Coupon. The moment the organiser triggers the reveal, every member' + "’" + 's coupon unlocks here at the same time. Come back and reopen this after the announcement.</div>';
+      return;
+    }
+    body.innerHTML =
+      '<div class="lucky-reveal"><div style="font-size:2rem;">🎉</div><div class="big">'+DATA.lucky.prize+'</div>' +
+      '<div style="color:var(--ink-soft); font-size:0.86rem; margin-top:6px;">Show this screen at the redemption desk</div></div>';
+  }
+
+  /* ---------------- transfer flow ---------------- */
+  window.openTransfer = function(id){
+    var p = findPass(id);
+    if(!p) return;
+    var claimUrl = location.origin + '/claim/' + id;
+    // Claim links (with owner approval) are only offered for a pass' very
+    // first transfer -- after that it's just number + OTP, same as always,
+    // so later holders aren't stuck approving every re-transfer.
+    var showClaimOption = p.transfersUsed === 0;
+    // Someone currently eligible for the Lucky Coupon (2+ complete entry
+    // admissions in hand) who sends THIS pass away would drop below that --
+    // the server computes this fresh on every load (see couldLoseLucky in
+    // /api/members/:memberId/summary), so warn before they confirm rather
+    // than have the Grand Finale card silently vanish afterwards.
+    var luckyWarningHtml = p.couldLoseLucky ?
+      '<div class="p" style="margin:14px 0; padding:10px 12px; border-radius:10px; background:color-mix(in srgb, var(--danger) 14%, transparent); border:1px solid var(--danger); color:var(--ink);">' +
+        '⚠️ Sending this away will drop you below 2 complete entry coupons -- you' + "’" + 'll lose your Lucky Coupon / Grand Finale entry immediately.' +
+      '</div>' : '';
+    var sheet = document.getElementById('sheet-content');
+    sheet.innerHTML =
+      '<div class="sheet-handle"></div>' +
+      '<h3>Transfer "'+p.title+'"</h3>' +
+      '<div class="p">Send this to another member over WhatsApp. They confirm with a one-time code, and it moves out of your account.</div>' +
+      '<div class="transfer-meter"><span>Transfers used</span><span>'+p.transfersUsed+' of '+p.transferLimit+' allowed</span></div>' +
+      luckyWarningHtml +
+      '<div class="field"><label>Receiver' + "’" + 's WhatsApp number</label><input id="tf-phone" inputmode="tel" placeholder="+91 9xxxxxxxxx"></div>' +
+      '<button class="btn btn-primary" id="tf-send-btn" onclick="sendOtp(\''+id+'\')">Send verification code</button>' +
+      (showClaimOption ?
+        '<div class="p" style="margin-top:18px; padding-top:14px; border-top:1px solid var(--line);">' +
+          'Don' + "’" + 't have their number handy? Share this link instead -- they enter their own details, ' +
+          'and it only moves after <strong>you approve</strong> them (from the home screen, once they ask).' +
+        '</div>' +
+        '<button class="btn btn-ghost" onclick="copyClaimLink(\''+claimUrl+'\')">Copy claim link</button>'
+        : '');
+    openSheet();
+  };
+
+  window.copyClaimLink = function(url){
+    var done = function(){ showToast('Link copied -- share it over WhatsApp'); };
+    var fail = function(){ prompt('Copy this link:', url); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done, fail);
+    } else { fail(); }
+  };
+
+  window.sendOtp = function(id){
+    var phone = document.getElementById('tf-phone').value.trim();
+    if(phone.length < 6){ showToast('Enter a valid WhatsApp number'); return; }
+    var btn = document.getElementById('tf-send-btn'); btn.disabled = true; btn.textContent = 'Sending…';
+    api('/api/transfer/initiate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ passId: id, toWhatsapp: phone })
+    }).then(function(r){
+      if(r.status !== 200 || !r.body.ok){
+        showToast('Could not start transfer: ' + (r.body.error || 'error'));
+        btn.disabled = false; btn.textContent = 'Send verification code';
+        return;
+      }
+      var sheet = document.getElementById('sheet-content');
+      sheet.innerHTML =
+        '<div class="sheet-handle"></div>' +
+        '<h3>Enter the code</h3>' +
+        '<div class="p">We sent a 6-digit code to '+phone+' on WhatsApp.</div>' +
+        '<div class="otp-hint">'+r.body.devNote+'</div>' +
+        '<div class="field"><label>OTP</label><input id="tf-otp" inputmode="numeric" maxlength="6" placeholder="••••••"></div>' +
+        '<button class="btn btn-primary" onclick="confirmTransfer(\''+r.body.transferId+'\')">Confirm transfer</button>';
+    });
+  };
+
+  window.confirmTransfer = function(transferId){
+    var otp = document.getElementById('tf-otp').value.trim();
+    api('/api/transfer/confirm', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ transferId: transferId, otp: otp })
+    }).then(function(r){
+      if(r.status !== 200 || !r.body.ok){
+        showToast('Transfer failed: ' + (r.body.error || 'error'));
+        return;
+      }
+      closeSheet();
+      showToast('Transferred -- this coupon now belongs to the new member');
+      loadSummary().then(function(){ if(document.getElementById('screen-detail').classList.contains('active')) renderDetail(); });
+    });
+  };
+
+  function openSheet(){ document.getElementById('sheet-backdrop').classList.add('active'); }
+  window.closeSheet = function(){ document.getElementById('sheet-backdrop').classList.remove('active'); };
+  window.openDrawer = function(){ document.getElementById('drawer-backdrop').classList.add('active'); };
+  window.closeDrawer = function(){ document.getElementById('drawer-backdrop').classList.remove('active'); };
+
+  /* ---------------- nav / screens ---------------- */
+  window.showScreen = function(name){
+    document.querySelectorAll('.screen').forEach(function(el){ el.classList.remove('active','anim-in','anim-settle'); });
+    var el = document.getElementById('screen-'+name);
+    el.classList.add('active','anim-in');
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add('anim-settle'); }); });
+    if(name !== 'detail') stopQrRefresh();
+    if(name==='home' && DATA) renderHome();
+  };
+  window.setNav = function(btn){
+    btn.parentElement.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+  };
+
+  var toastTimer;
+  window.showToast = function(msg){
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+  };
+
+  // Passes can flip locked->active, or get scanned/transferred from another
+  // tab/device -- refresh whenever the member comes back to this tab.
+  window.addEventListener('focus', function(){
+    if(!DATA) return;
+    loadSummary().then(function(){
+      if(document.getElementById('screen-detail').classList.contains('active')) renderDetail();
+    });
+  });
+
+  boot();
+})();
+</script>
+</body>
+</html>
