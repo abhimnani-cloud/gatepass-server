@@ -7,6 +7,6 @@ services:
     startCommand: node server.js
     envVars:
       - key: NODE_VERSION
-        value: 22.11.0
+        value: 22.22.0
       - key: ADMIN_PASSWORD
         sync: false
