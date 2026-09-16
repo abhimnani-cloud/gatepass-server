@@ -1,35 +1,12 @@
-# NOTE: plan is set to "starter" (a small paid tier, ~$7/month) on purpose,
-# NOT "free". Render's free tier does not support persistent disks, and it
-# wipes the service's filesystem (which is where the SQLite database file
-# lives) every time it goes idle and spins back up -- meaning members and
-# allotted coupons would randomly vanish. Real event data needs the disk,
-# so it needs a paid plan that supports one. When you deploy this Blueprint,
-# Render's review screen also lets you double-check/change the plan before
-# confirming -- make sure it is NOT "Free" there either.
 services:
   - type: web
     name: gatepass-server
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: ""
     startCommand: node server.js
-    disk:
-      name: gatepass-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
-      - key: DATA_DIR
-        value: /var/data
-      # This app needs Node 22.5+ (for node:sqlite). Pinning it explicitly
-      # here is the most reliable way to get that on Render -- package.json's
-      # own "engines" field is a lower-priority hint that some setups don't
-      # pick up consistently.
       - key: NODE_VERSION
         value: 22.11.0
-      # Set your OWN password here in Render's dashboard (Environment tab)
-      # after the first deploy -- do NOT put your real password in this file,
-      # since render.yaml is committed to your git repo. Leaving this unset
-      # falls back to whatever's in lib/event.config.js (changeme123 by
-      # default), which is NOT safe for a live event.
       - key: ADMIN_PASSWORD
         sync: false
